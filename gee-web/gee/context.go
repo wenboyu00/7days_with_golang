@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-// map[string]interface{}起了一个别名gee.H，构建JSON数据时，显得更简洁
+// H map[string]interface{}起了一个别名gee.H，构建JSON数据时，显得更简洁
 type H map[string]interface{}
 
 type Context struct {
@@ -16,6 +16,7 @@ type Context struct {
 	// request info
 	Path   string
 	Method string
+	Params map[string]string
 	// response info
 	StatusCode int
 }
@@ -29,12 +30,17 @@ func newContext(w http.ResponseWriter, req *http.Request) *Context {
 	}
 }
 
-// 访问PostForm参数
+func (c *Context) Param(key string) string {
+	value, _ := c.Params[key]
+	return value
+}
+
+// PostForm 访问PostForm参数
 func (c *Context) PostForm(key string) string {
 	return c.Req.FormValue(key)
 }
 
-// 访问query参数
+// Query 访问query参数
 func (c *Context) Query(key string) string {
 	return c.Req.URL.Query().Get(key)
 }
